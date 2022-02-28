@@ -1,4 +1,4 @@
-#language detection and sentiment analysis
+#language detection 
 #In order to use Azure Cognitive Services APIs from Python, you have to install the Phyton SDK. The code below will make sure you have the required SDK installed.
 
 pip install azure-ai-textanalytics
