@@ -1,0 +1,62 @@
+#language detection and sentiment analysis
+#In order to use Azure Cognitive Services APIs from Python, you have to install the Phyton SDK. The code below will make sure you have the required SDK installed.
+
+pip install azure-ai-textanalytics
+
+#Access to Azure Cognitive Services requires three variables that can be accessed through the Azure Portal.
+#Service Access Key
+#Service Access Endoint
+#Service Region
+
+#Only two of these variables are needed by the Language Detection APIs
+
+cognitive_key = '<YourKey>'
+cognitive_endpoint = '<YourEndpoint>'
+
+#A TextAnalyticsClient class wraps all access to the APIs. To create one, we will need an AzureKeyCredential object. 
+#Both classes can be used quickly after importing the two namespaces shown below. 
+
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
+
+#the code snippet below creates the object by passing the access key and returning the credential object back to a credential variable to be used later. 
+
+credential = AzureKeyCredential(cognitive_key)
+text_analytics_client = TextAnalyticsClient(endpoint=cognitive_endpoint, credential=credential)
+
+documents = [
+    "This is written in English.",
+    "Ceci est écrit en Français.",
+    "Dies ist in deutscher Sprache geschrieben."
+]
+
+#In the code example below, we are using the text_analytics_client we previously created to call the detect_language method from Azure Cognitive Services. 
+#In this case, the only parameter we need to pass is the array of documents. 
+
+language_analysis = text_analytics_client.detect_language(documents)
+
+#Once we get the language_analysis object back, we filter out those that do not have an error. Assign the successful documents to a result variable.
+
+result = [doc for doc in language_analysis if not doc.is_error]
+
+#Finally, we loop through the results we have received and access the language name from primary_language.name property, the language code from primary_language.iso6391_name property, and the confidence score from primary_language.confidence_score property.
+
+for doc in result:
+    print("Language detected: {}".format(doc.primary_language.name))
+    print("ISO6391 name: {}".format(doc.primary_language.iso6391_name))
+    print("Confidence score: {}\n".format(doc.primary_language.confidence_score))
+    
+#Language detection provides us the capability of detecting the language of a text or document.
+#Results:
+
+Language detected: English
+ISO6391 name: en
+Confidence score: 1.0
+
+Language detected: French
+ISO6391 name: fr
+Confidence score: 1.0
+
+Language detected: German
+ISO6391 name: de
+Confidence score: 1.0
